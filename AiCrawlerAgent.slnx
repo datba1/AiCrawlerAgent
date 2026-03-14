@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="AiCrawler.Agent/AiCrawler.Agent.csproj" />
+  <Project Path="AiCrawler.Api/AiCrawler.Api.csproj" />
+  <Project Path="AiCrawler.Core/AiCrawler.Core.csproj" />
+  <Project Path="AiCrawler.Scraper/AiCrawler.Scraper.csproj" />
+  <Project Path="AiCrawler.Tools/AiCrawler.Tools.csproj" />
+</Solution>
