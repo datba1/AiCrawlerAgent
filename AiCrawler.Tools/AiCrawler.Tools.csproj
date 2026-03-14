@@ -2,11 +2,17 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AiCrawler.Scraper\AiCrawler.Scraper.csproj" />
+    <ProjectReference Include="..\AiCrawler.Core\AiCrawler.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="McpTools\" />
     <Folder Include="ToolSchemas\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ModelContextProtocol" Version="1.1.0" />
+    <PackageReference Include="ModelContextProtocol.Core" Version="1.1.0" />
   </ItemGroup>
 
   <PropertyGroup>
