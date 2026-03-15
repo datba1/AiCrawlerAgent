@@ -5,12 +5,19 @@ using AiCrawler.Scraper.Crawler;
 using AiCrawler.Tools.McpTools;
 using Microsoft.Extensions.AI;
 using ModelContextProtocol;
+using AiCrawler.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using OpenAI;
+using AiCrawler.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 builder.Services.AddHttpClient<ISearchService, TavilySearchService>();
+builder.Services.AddScoped<IResearchRepository, ResearchRepository>();
 builder.Services.AddSingleton<IScraperService, ScraperService>();
 builder.Services.AddSingleton<IAgentOrchestrator, CrawlerAgent>();
 

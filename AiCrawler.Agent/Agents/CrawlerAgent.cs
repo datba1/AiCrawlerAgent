@@ -8,11 +8,18 @@ namespace AiCrawler.Agent.Agents
     public class CrawlerAgent(
         ISearchService searchService,
         IScraperService scraperService,
+        IResearchRepository repository,
         IChatClient chatClient) : IAgentOrchestrator
     {
         public async Task<string> ExecuteResearchTaskAsync(string taskDescription, CancellationToken ct = default)
         {
             var searchResults = await searchService.SearchAsync(new SearchRequest(taskDescription), ct);
+
+            var researchTask = new ResearchTask
+            {
+                Topic = taskDescription,
+                CreatedAt = DateTime.UtcNow
+            };
 
             var report = new StringBuilder();
             report.AppendLine($"# Research Report: {taskDescription}");
@@ -28,8 +35,20 @@ namespace AiCrawler.Agent.Agents
                 {
                     var summary = await SummarizeContentAsync(crawlResult.Content, taskDescription, ct);
                     report.AppendLine($"  - **Summary**: {summary}");
+
+                    researchTask.ScrapedContents.Add(new ScrapedContent
+                    {
+                        Title = result.Title,
+                        Url = result.Url,
+                        Content = crawlResult.Content,
+                        Summary = summary,
+                        ScrapedAt = DateTime.UtcNow
+                    });
                 }
             }
+
+            researchTask.Summary = report.ToString();
+            await repository.AddResearchTaskAsync(researchTask, ct);
 
             return report.ToString();
         }
