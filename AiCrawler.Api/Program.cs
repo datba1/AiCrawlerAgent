@@ -16,13 +16,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddSingleton<IResearchQueue, ResearchQueue>();
+builder.Services.AddHostedService<ResearchBackgroundService>();
+
 builder.Services.AddHttpClient<ISearchService, TavilySearchService>();
 builder.Services.AddScoped<IResearchRepository, ResearchRepository>();
+builder.Services.AddScoped<IExtractionService, LlmExtractionService>();
 builder.Services.AddSingleton<IScraperService, ScraperService>();
 builder.Services.AddSingleton<IAgentOrchestrator, CrawlerAgent>();
 
 // Add simple chat client for agent (In production use real config)
-builder.Services.AddSingleton<IChatClient>(new OpenAIClient("dummy").AsChatClient("gpt-4o"));
+var openAiConfig = builder.Configuration.GetSection("AiServices:OpenAI");
+builder.Services.AddSingleton<IChatClient>(new OpenAIClient(openAiConfig["ApiKey"] ?? "dummy")
+    .AsChatClient(openAiConfig["Model"] ?? "gpt-4o"));
 
 builder.Services.AddControllers();
 

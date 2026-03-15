@@ -6,7 +6,7 @@ namespace AiCrawler.Api.Controllers
 {
     [ApiController]
     [Route("api")]
-    public class CrawlController(IAgentOrchestrator orchestrator, ISearchService searchService, IScraperService scraperService) : ControllerBase
+    public class CrawlController(IAgentOrchestrator orchestrator, ISearchService searchService, IScraperService scraperService, IResearchQueue queue) : ControllerBase
     {
         [HttpGet("research")]
         public async Task<IActionResult> Research([FromQuery] string topic)

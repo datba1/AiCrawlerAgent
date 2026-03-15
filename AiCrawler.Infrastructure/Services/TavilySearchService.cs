@@ -5,9 +5,9 @@ using System.Text.Json.Serialization;
 
 namespace AiCrawler.Infrastructure.Services
 {
-    public class TavilySearchService(HttpClient httpClient) : ISearchService
+    public class TavilySearchService(HttpClient httpClient, Microsoft.Extensions.Configuration.IConfiguration configuration) : ISearchService
     {
-        private const string ApiKey = "YOUR_TAVILY_API_KEY"; // Should be moved to configuration
+        private string ApiKey => configuration["AiServices:Tavily:ApiKey"] ?? string.Empty;
 
         public async Task<IEnumerable<SearchResult>> SearchAsync(SearchRequest request, CancellationToken ct = default)
         {

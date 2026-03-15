@@ -12,6 +12,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.AI" Version="1.0.0-preview.1.25120.3" />
     <PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="1.0.0-preview.1.25120.3" />
     <PackageReference Include="ModelContextProtocol" Version="1.1.0" />
     <PackageReference Include="ModelContextProtocol.Core" Version="1.1.0" />
@@ -27,6 +28,7 @@
     <ProjectReference Include="..\AiCrawler.Infrastructure\AiCrawler.Infrastructure.csproj" />
     <ProjectReference Include="..\AiCrawler.Tools\AiCrawler.Tools.csproj" />
     <ProjectReference Include="..\AiCrawler.Agent\AiCrawler.Agent.csproj" />
+    <ProjectReference Include="..\AiCrawler.Core\AiCrawler.Core.csproj" />
   </ItemGroup>
 
 </Project>
