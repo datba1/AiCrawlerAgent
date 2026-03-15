@@ -12,14 +12,12 @@ namespace AiCrawler.Agent.Agents
     {
         public async Task<string> ExecuteResearchTaskAsync(string taskDescription, CancellationToken ct = default)
         {
-            // 1. Search for relevant URLs
             var searchResults = await searchService.SearchAsync(new SearchRequest(taskDescription), ct);
 
             var report = new StringBuilder();
             report.AppendLine($"# Research Report: {taskDescription}");
             report.AppendLine("\n## Discovered Sources:");
 
-            // 2. Scrape and analyze each URL
             foreach (var result in searchResults.Take(3))
             {
                 report.AppendLine($"- [{result.Title}]({result.Url})");
@@ -28,7 +26,6 @@ namespace AiCrawler.Agent.Agents
 
                 if (crawlResult.Success)
                 {
-                    // 3. Use LLM to summarize/extract
                     var summary = await SummarizeContentAsync(crawlResult.Content, taskDescription, ct);
                     report.AppendLine($"  - **Summary**: {summary}");
                 }

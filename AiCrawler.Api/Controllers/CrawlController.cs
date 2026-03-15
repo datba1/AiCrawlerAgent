@@ -8,11 +8,14 @@ namespace AiCrawler.Api.Controllers
     [Route("api")]
     public class CrawlController(IAgentOrchestrator orchestrator, ISearchService searchService, IScraperService scraperService) : ControllerBase
     {
-        // Matches README: GET /api/research?topic=ai-agents
         [HttpGet("research")]
         public async Task<IActionResult> Research([FromQuery] string topic)
         {
-            if (string.IsNullOrEmpty(topic)) return BadRequest("Topic is required");
+            if (string.IsNullOrEmpty(topic))
+            {
+                return BadRequest("Topic is required");
+            }
+
             var result = await orchestrator.ExecuteResearchTaskAsync(topic);
             return Ok(new { topic, summary = result });
         }
@@ -20,7 +23,11 @@ namespace AiCrawler.Api.Controllers
         [HttpGet("search")]
         public async Task<IActionResult> Search([FromQuery] string query)
         {
-            if (string.IsNullOrEmpty(query)) return BadRequest("Query is required");
+            if (string.IsNullOrEmpty(query))
+            {
+                return BadRequest("Query is required");
+            }
+
             var result = await searchService.SearchAsync(new SearchRequest(query));
             return Ok(result);
         }
@@ -28,7 +35,11 @@ namespace AiCrawler.Api.Controllers
         [HttpGet("scrape")]
         public async Task<IActionResult> Scrape([FromQuery] string url)
         {
-            if (string.IsNullOrEmpty(url)) return BadRequest("Url is required");
+            if (string.IsNullOrEmpty(url))
+            {
+                return BadRequest("Url is required");
+            }
+
             var result = await scraperService.ScrapeAsync(new CrawlRequest(url));
             return Ok(result);
         }
