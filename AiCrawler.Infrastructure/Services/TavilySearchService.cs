@@ -15,11 +15,15 @@ namespace AiCrawler.Infrastructure.Services
             {
                 api_key = ApiKey,
                 query = request.Query,
-                search_depth = "smart",
+                search_depth = "advanced",
                 max_results = request.MaxResults
             }, ct);
 
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync(ct);
+                throw new HttpRequestException($"Tavily API returned {response.StatusCode}: {errorBody}");
+            }
 
             var result = await response.Content.ReadFromJsonAsync<TavilyResponse>(cancellationToken: ct);
 

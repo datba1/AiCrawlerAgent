@@ -23,24 +23,32 @@ builder.Services.AddHttpClient<ISearchService, TavilySearchService>();
 builder.Services.AddScoped<IResearchRepository, ResearchRepository>();
 builder.Services.AddScoped<IExtractionService, LlmExtractionService>();
 builder.Services.AddSingleton<IScraperService, ScraperService>();
-builder.Services.AddSingleton<IAgentOrchestrator, CrawlerAgent>();
+builder.Services.AddScoped<IAgentOrchestrator, CrawlerAgent>();
 
 // Add simple chat client for agent (In production use real config)
 var openAiConfig = builder.Configuration.GetSection("AiServices:OpenAI");
-builder.Services.AddSingleton<IChatClient>(new OpenAIClient(openAiConfig["ApiKey"] ?? "dummy")
-    .AsChatClient(openAiConfig["Model"] ?? "gpt-4o"));
+builder.Services.AddSingleton<IChatClient>(sp =>
+    new OpenAI.Chat.ChatClient(openAiConfig["Model"] ?? "gpt-4o-mini", openAiConfig["ApiKey"] ?? "dummy")
+        .AsIChatClient());
+
 
 builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // MCP Server Setup
-builder.Services.AddMcpServer(options => 
+builder.Services.AddMcpServer(options =>
 {
-    options.ServerInfo = new () { Name = "AiCrawlerAgent", Version = "1.0.0" };
+    options.ServerInfo = new() { Name = "AiCrawlerAgent", Version = "1.0.0" };
 })
 .WithStdioServerTransport()
 .WithToolsFromAssembly();
 
 var app = builder.Build();
+
+// Enable Swagger UI
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.MapControllers();
 

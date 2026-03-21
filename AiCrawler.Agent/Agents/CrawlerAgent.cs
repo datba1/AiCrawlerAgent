@@ -2,6 +2,9 @@ using AiCrawler.Core.Interfaces;
 using AiCrawler.Core.Models;
 using Microsoft.Extensions.AI;
 using System.Text;
+using ChatMessage = Microsoft.Extensions.AI.ChatMessage;
+using ChatRole = Microsoft.Extensions.AI.ChatRole;
+
 
 namespace AiCrawler.Agent.Agents
 {
@@ -10,7 +13,7 @@ namespace AiCrawler.Agent.Agents
         IScraperService scraperService,
         IExtractionService extractionService,
         IResearchRepository repository,
-        IChatClient chatClient) : IAgentOrchestrator
+        Microsoft.Extensions.AI.IChatClient chatClient) : IAgentOrchestrator
     {
         public async Task<string> ExecuteResearchTaskAsync(string taskDescription, CancellationToken ct = default)
         {
@@ -19,16 +22,18 @@ namespace AiCrawler.Agent.Agents
                 Topic = taskDescription,
                 CreatedAt = DateTime.UtcNow
             };
-
             // Define tools for the agent
-            var tools = new ChatTool[]
+            var tools = new List<AITool>
             {
-                ChatTool.CreateFromCallback("search_web", 
-                    async (string query) => await searchService.SearchAsync(new SearchRequest(query), ct)),
-                ChatTool.CreateFromCallback("scrape_page", 
-                    async (string url) => await scraperService.ScrapeAsync(new CrawlRequest(url), ct)),
-                ChatTool.CreateFromCallback("extract_structured_data",
-                    async (string content, string schema) => await extractionService.ExtractStructuredDataAsync(content, schema, ct))
+                AIFunctionFactory.Create(
+                    async (string query) => await searchService.SearchAsync(new SearchRequest(query), ct),
+                    "search_web", "Finds URLs and information on the web."),
+                AIFunctionFactory.Create(
+                    async (string url) => await scraperService.ScrapeAsync(new CrawlRequest(url), ct),
+                    "scrape_page", "Extracts the full text content of a web page."),
+                AIFunctionFactory.Create(
+                    async (string content, string schema) => await extractionService.ExtractStructuredDataAsync(content, schema, ct),
+                    "extract_structured_data", "Extracts structured information from raw text given a schema.")
             };
 
 
@@ -48,25 +53,31 @@ namespace AiCrawler.Agent.Agents
             {
                 iterations++;
                 var response = await chatClient.GetResponseAsync(messages, chatOptions, ct);
-                messages.Add(response.Message);
+                var responseMessage = response.Messages[0];
+                messages.Add(responseMessage);
 
-                if (response.Message.Contents.OfType<ChatToolCallContent>().Any())
+                if (responseMessage.Contents.OfType<FunctionCallContent>().Any())
                 {
-                    foreach (var toolCall in response.Message.Contents.OfType<ChatToolCallContent>())
+                    foreach (var toolCall in responseMessage.Contents.OfType<FunctionCallContent>())
                     {
                         // The framework handles the callback execution if we use GetRequiredService<IChatClient>().AsBuilder().UseFunctionInvocation()...
                         // But for simplicity in this manual loop:
                         if (toolCall.Name == "search_web")
                         {
                             var query = toolCall.Arguments?["query"]?.ToString() ?? "";
+                            if (string.IsNullOrWhiteSpace(query))
+                            {
+                                messages.Add(new ChatMessage(ChatRole.Tool, "Error: Search query is empty. Please provide a valid query.") { Contents = { new FunctionResultContent(toolCall.CallId, new List<SearchResult>()) } });
+                                continue;
+                            }
                             var results = await searchService.SearchAsync(new SearchRequest(query), ct);
-                            messages.Add(new ChatMessage(ChatRole.Tool, $"Discovered {results.Count()} results for '{query}'") { Contents = { new ChatToolResponseContent(toolCall.CallId, results) } });
+                            messages.Add(new ChatMessage(ChatRole.Tool, $"Discovered {results.Count()} results for '{query}'") { Contents = { new FunctionResultContent(toolCall.CallId, results) } });
                         }
                         else if (toolCall.Name == "scrape_page")
                         {
                             var url = toolCall.Arguments?["url"]?.ToString() ?? "";
                             var result = await scraperService.ScrapeAsync(new CrawlRequest(url), ct);
-                            
+
                             if (result.Success)
                             {
                                 researchTask.ScrapedContents.Add(new ScrapedContent
@@ -77,14 +88,14 @@ namespace AiCrawler.Agent.Agents
                                     ScrapedAt = DateTime.UtcNow
                                 });
                             }
-                            messages.Add(new ChatMessage(ChatRole.Tool, result.Success ? "Successfully scraped content." : $"Error: {result.Error}") { Contents = { new ChatToolResponseContent(toolCall.CallId, result) } });
+                            messages.Add(new ChatMessage(ChatRole.Tool, result.Success ? "Successfully scraped content." : $"Error: {result.Error}") { Contents = { new FunctionResultContent(toolCall.CallId, result) } });
                         }
                         else if (toolCall.Name == "extract_structured_data")
                         {
                             var content = toolCall.Arguments?["content"]?.ToString() ?? "";
                             var schema = toolCall.Arguments?["schema"]?.ToString() ?? "";
                             var extracted = await extractionService.ExtractStructuredDataAsync(content, schema, ct);
-                            messages.Add(new ChatMessage(ChatRole.Tool, "Extracted structured data.") { Contents = { new ChatToolResponseContent(toolCall.CallId, extracted) } });
+                            messages.Add(new ChatMessage(ChatRole.Tool, "Extracted structured data.") { Contents = { new FunctionResultContent(toolCall.CallId, extracted) } });
                         }
                     }
                 }
