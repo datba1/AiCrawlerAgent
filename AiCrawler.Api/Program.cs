@@ -32,6 +32,17 @@ builder.Services.AddSingleton<IChatClient>(sp =>
         .AsIChatClient());
 
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:52033")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -49,6 +60,8 @@ var app = builder.Build();
 // Enable Swagger UI
 app.UseSwagger();
 app.UseSwaggerUI();
+
+app.UseCors("AllowFrontend");
 
 app.MapControllers();
 
