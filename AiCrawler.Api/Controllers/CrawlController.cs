@@ -1,9 +1,11 @@
 using AiCrawler.Core.Interfaces;
 using AiCrawler.Core.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AiCrawler.Api.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api")]
     public class CrawlController(IAgentOrchestrator orchestrator, ISearchService searchService, IScraperService scraperService, IResearchQueue queue) : ControllerBase

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import keycloak from '../keycloak';
 
 const API_BASE_URL = 'http://localhost:5168/api'; // Adjust based on your backend port
 
@@ -8,6 +9,18 @@ const apiClient = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+apiClient.interceptors.request.use(
+  (config) => {
+    if (keycloak.token) {
+      config.headers.Authorization = `Bearer ${keycloak.token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export const aiService = {
   /**

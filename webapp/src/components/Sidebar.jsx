@@ -5,8 +5,10 @@ import {
   Globe, 
   Terminal,
   ChevronRight,
-  X
+  X,
+  LogOut
 } from 'lucide-react';
+import keycloak from '../keycloak';
 
 const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
   <button
@@ -82,6 +84,18 @@ const Sidebar = ({ activeItem, onNavigate, isOpen, onClose }) => {
             />
           ))}
         </nav>
+
+        <div className="px-6 mb-4">
+          <button
+            onClick={() => keycloak.logout()}
+            className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-slate-500 hover:bg-red-50 hover:text-red-600 transition-all duration-300 group"
+          >
+            <div className="p-1 rounded-md bg-slate-100 group-hover:bg-red-100 transition-colors">
+              <LogOut size={16} strokeWidth={1.5} />
+            </div>
+            <span className="font-medium text-sm tracking-tight">Logout</span>
+          </button>
+        </div>
 
         <div className="p-5 bg-slate-50/50 m-4 rounded-2xl border border-slate-100">
           <div className="flex items-center space-x-3">

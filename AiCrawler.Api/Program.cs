@@ -9,6 +9,8 @@ using AiCrawler.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using OpenAI;
 using AiCrawler.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +32,24 @@ var openAiConfig = builder.Configuration.GetSection("AiServices:OpenAI");
 builder.Services.AddSingleton<IChatClient>(sp =>
     new OpenAI.Chat.ChatClient(openAiConfig["Model"] ?? "gpt-4o-mini", openAiConfig["ApiKey"] ?? "dummy")
         .AsIChatClient());
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        var keycloakConfig = builder.Configuration.GetSection("Keycloak");
+        options.Authority = keycloakConfig["Authority"];
+        options.Audience = keycloakConfig["Audience"];
+        options.MetadataAddress = keycloakConfig["MetadataAddress"];
+        options.RequireHttpsMetadata = bool.Parse(keycloakConfig["RequireHttpsMetadata"] ?? "true");
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 
 builder.Services.AddCors(options =>
@@ -37,7 +57,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:52033")
+            policy.WithOrigins("http://localhost:52033", "http://localhost:52034")
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
@@ -62,6 +82,9 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseCors("AllowFrontend");
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
