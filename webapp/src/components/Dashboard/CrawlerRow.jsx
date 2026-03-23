@@ -11,34 +11,34 @@ const CrawlerRow = ({ name, url, status, lastRun, pages }) => {
 
   return (
     <tr className="group hover:bg-slate-50 transition-colors">
-      <td className="py-4 px-4 align-middle">
+      <td className="py-2.5 px-4 align-middle">
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs">
+          <div className="w-8 h-8 rounded-md bg-slate-100 flex items-center justify-center text-slate-500 font-semibold text-xs">
             {name.charAt(0)}
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-800">{name}</p>
+            <p className="text-sm font-medium text-slate-800">{name}</p>
             <p className="text-xs text-slate-500 font-light truncate max-w-[200px]">{url}</p>
           </div>
         </div>
       </td>
-      <td className="py-4 px-4 align-middle">
-        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[status] || 'bg-slate-100'}`}>
+      <td className="py-2.5 px-4 align-middle">
+        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-normal ${statusColors[status] || 'bg-slate-100'}`}>
           {status}
         </span>
       </td>
-      <td className="py-4 px-4 align-middle">
+      <td className="py-2.5 px-4 align-middle">
         <div className="flex items-center space-x-1 text-xs text-slate-600">
-          <Clock size={12} />
-          <span>{lastRun}</span>
+          <Clock size={12} strokeWidth={1.5} />
+          <span className="font-light">{lastRun}</span>
         </div>
       </td>
-      <td className="py-4 px-4 align-middle text-sm text-slate-600 font-medium">
+      <td className="py-2.5 px-4 align-middle text-sm text-slate-600 font-normal">
         {pages.toLocaleString()}
       </td>
-      <td className="py-4 px-4 align-middle text-right text-slate-400">
+      <td className="py-2.5 px-4 align-middle text-right text-slate-400">
         <button className="p-1 hover:bg-slate-100 rounded-md transition-colors">
-          <MoreVertical size={16} />
+          <MoreVertical size={16} strokeWidth={1.5} />
         </button>
       </td>
     </tr>

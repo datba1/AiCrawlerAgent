@@ -27,14 +27,14 @@ const Search = () => {
   return (
     <div className="space-y-6 max-w-5xl animate-in fade-in duration-500">
       <div className="flex items-center space-x-3">
-        <div className="p-2 bg-primary-100 text-primary-600 rounded-lg">
-          <SearchIcon size={24} />
+        <div className="p-1.5 bg-primary-100 text-primary-600 rounded-md">
+          <SearchIcon size={20} strokeWidth={1.5} />
         </div>
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">AI Search</h1>
+        <h1 className="text-xl font-semibold text-slate-900 tracking-tight">AI Search</h1>
       </div>
 
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-        <p className="text-slate-500 mb-4">Search across the web using AI-powered search services and get structured data results.</p>
+      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <p className="text-slate-500 mb-4 text-xs">Search across the web using AI-powered search services and get structured data results.</p>
         <div className="flex space-x-3">
           <input 
             type="text" 
@@ -42,15 +42,15 @@ const Search = () => {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
             placeholder="Search for companies, trends, or specific data..." 
-            className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 focus:bg-white outline-none transition-all"
+            className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-1 focus:ring-primary-500 focus:bg-white outline-none transition-all"
             disabled={loading}
           />
           <button 
             onClick={handleSearch}
             disabled={loading || !query.trim()}
-            className="bg-primary-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center space-x-2"
+            className="bg-primary-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center space-x-2"
           >
-            {loading ? <Loader2 className="animate-spin" size={20} /> : <span>Search</span>}
+            {loading ? <Loader2 className="animate-spin" size={18} strokeWidth={1.5} /> : <span>Search</span>}
           </button>
         </div>
       </div>
@@ -65,19 +65,19 @@ const Search = () => {
       {results && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in slide-in-from-bottom-4 duration-500">
           {(Array.isArray(results) ? results : results.results || []).map((result, index) => (
-            <div key={index} className="bg-white p-5 rounded-2xl border border-slate-200 hover:border-primary-400 hover:shadow-md transition-all group">
-              <h3 className="font-bold text-slate-900 group-hover:text-primary-600 transition-colors line-clamp-2 min-h-[3rem]">{result.title || 'Untitled'}</h3>
-              <p className="text-sm text-slate-500 mt-2 line-clamp-3 leading-relaxed">{result.snippet || 'No summary available.'}</p>
+            <div key={index} className="bg-white p-4 rounded-xl border border-slate-200 hover:border-primary-300 hover:shadow-md transition-all group">
+              <h3 className="font-semibold text-slate-900 group-hover:text-primary-600 transition-colors line-clamp-2 min-h-[2.5rem] text-sm">{result.title || 'Untitled'}</h3>
+              <p className="text-xs text-slate-500 mt-2 line-clamp-3 leading-relaxed">{result.snippet || 'No summary available.'}</p>
               <div className="mt-4 pt-4 border-t border-slate-50 flex items-center justify-between">
-                <span className="text-xs font-medium text-slate-400">Score: {result.score?.toFixed(2) || '0.00'}</span>
+                <span className="text-[10px] font-medium text-slate-400">Score: {result.score?.toFixed(2) || '0.00'}</span>
                 <a 
                   href={result.url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="inline-flex items-center space-x-1.5 text-xs font-bold text-primary-600 hover:bg-primary-50 px-3 py-1.5 rounded-lg transition-colors"
+                  className="inline-flex items-center space-x-1.5 text-[10px] font-semibold text-primary-600 hover:bg-primary-50 px-2 py-1 rounded-md transition-colors"
                 >
                   <span>Visit Website</span>
-                  <ExternalLink size={14} />
+                  <ExternalLink size={12} strokeWidth={1.5} />
                 </a>
               </div>
             </div>

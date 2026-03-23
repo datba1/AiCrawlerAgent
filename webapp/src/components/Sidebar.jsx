@@ -11,17 +11,17 @@ import {
 const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
   <button
     onClick={onClick}
-    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 group ${
+    className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-all duration-300 group ${
       active
-        ? 'bg-primary-600 text-white shadow-lg shadow-primary-200'
+        ? 'bg-primary-600 text-white shadow-md shadow-primary-100'
         : 'text-slate-500 hover:bg-primary-50 hover:text-primary-600'
     }`}
   >
-    <div className={`p-1.5 rounded-lg transition-colors ${active ? 'bg-primary-500' : 'bg-slate-100 group-hover:bg-primary-100'}`}>
-      <Icon size={18} />
+    <div className={`p-1 rounded-md transition-colors ${active ? 'bg-primary-500' : 'bg-slate-100 group-hover:bg-primary-100'}`}>
+      <Icon size={16} strokeWidth={1.5} />
     </div>
-    <span className="font-semibold text-sm tracking-tight">{label}</span>
-    {active && <ChevronRight size={14} className="ml-auto opacity-70" />}
+    <span className="font-medium text-sm tracking-tight">{label}</span>
+    {active && <ChevronRight size={12} className="ml-auto opacity-70" strokeWidth={1.5} />}
   </button>
 );
 
@@ -49,14 +49,14 @@ const Sidebar = ({ activeItem, onNavigate, isOpen, onClose }) => {
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:relative lg:translate-x-0 flex flex-col h-screen overflow-hidden`}
       >
-        <div className="p-8 flex items-center justify-between">
-          <div className="flex items-center space-x-3.5">
-            <div className="w-11 h-11 bg-primary-600 rounded-2xl flex items-center justify-center shadow-xl shadow-primary-200 group transition-transform hover:scale-105 active:scale-95">
-              <Globe className="text-white animate-pulse-slow" size={24} />
+        <div className="p-6 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-200 group transition-transform hover:scale-105 active:scale-95">
+              <Globe className="text-white animate-pulse-slow" size={20} strokeWidth={1.5} />
             </div>
             <div className="flex flex-col">
-              <span className="text-xl font-black text-slate-800 tracking-tighter leading-none">AI CRAWLER</span>
-              <span className="text-[10px] font-bold text-primary-500 tracking-[0.2em] mt-1 uppercase">Advanced Agent</span>
+              <span className="text-lg font-bold text-slate-800 tracking-tighter leading-none">AI CRAWLER</span>
+              <span className="text-[9px] font-semibold text-primary-500 tracking-[0.2em] mt-1 uppercase">Advanced Agent</span>
             </div>
           </div>
           <button 
@@ -83,14 +83,14 @@ const Sidebar = ({ activeItem, onNavigate, isOpen, onClose }) => {
           ))}
         </nav>
 
-        <div className="p-6 bg-slate-50/50 m-6 rounded-3xl border border-slate-100">
+        <div className="p-5 bg-slate-50/50 m-4 rounded-2xl border border-slate-100">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-2xl bg-white border border-slate-200 flex items-center justify-center shadow-sm">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <div className="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xs font-bold text-slate-700">System Status</span>
-              <span className="text-[10px] text-emerald-600 font-medium">All systems online</span>
+              <span className="text-[11px] font-semibold text-slate-700">System Status</span>
+              <span className="text-[9px] text-emerald-600 font-medium">All systems online</span>
             </div>
           </div>
         </div>

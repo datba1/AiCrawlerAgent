@@ -22,12 +22,12 @@ const Dashboard = () => {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">System Overview</h1>
-          <p className="text-slate-500 text-sm mt-1">Real-time status of your AI crawler agents.</p>
+          <h1 className="text-xl font-semibold text-slate-900 tracking-tight">System Overview</h1>
+          <p className="text-slate-500 text-xs mt-1">Real-time status of your AI crawler agents.</p>
         </div>
-        <button className="flex items-center justify-center space-x-2 bg-primary-600 hover:bg-primary-700 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg shadow-primary-200 transition-all active:scale-95">
-          <Plus size={20} />
-          <span>New Crawler</span>
+        <button className="flex items-center justify-center space-x-2 bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-md shadow-primary-200 transition-all active:scale-95">
+          <Plus size={18} strokeWidth={1.5} />
+          <span>New Agent</span>
         </button>
       </div>
 
